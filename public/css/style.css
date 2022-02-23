@@ -1,0 +1,24 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+header {
+    height: 100px;
+    background-color: brown;
+}
+
+.grid_wrapper {
+    background-color: darkorchid;
+    display: grid;
+    grid-template-columns:1fr 800px 1fr;
+    grid-template-areas: 
+    "a1 ma a2";
+}
+
+main {
+    grid-area: ma;
+    background-color: aqua;
+    display: grid;
+}
