@@ -9,11 +9,11 @@ header {
     background-color: brown;
     display: flex;
     align-items: center;
-    /* grid-row: align-items; */
+
 }
 
 .grid_wrapper {
-    background-color: green;
+    background: url(layout_background.png) fixed;
     display: grid;
     grid-template-columns:1fr 800px 1fr;
     grid-template-areas: 
@@ -30,6 +30,12 @@ main {
 }
 
 article {
-    background-color: purple;
+    background-color: lightgray;
     height: 100px;
+    border-style:outset;
+}
+
+article:hover {
+    background-color: rgb(192, 192, 192);
+    border-style:none;
 }
