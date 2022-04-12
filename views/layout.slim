@@ -8,14 +8,12 @@ html lang="en"
         title Pokémon site
     body 
         header 
-            h2 my teams 
-            h2 search 
-            h2 log in 
+            div#myteams my teams 
+            div#search search 
+            div#login 
+                a href="/register" Sign up
+                a href="/login" Log in 
         div.grid_wrapper
-            main
-                article.1 hej1
-                article.2 hej2
-                article.3 hej3
-                article.4 hej4
-                / ==yield 
-                / lägger till ett antal articles som sedan stylas med css
+            div.grid_child
+                ==yield 
+            
