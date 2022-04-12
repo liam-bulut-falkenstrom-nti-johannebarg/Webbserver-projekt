@@ -11,8 +11,11 @@ html lang="en"
             div#myteams my teams 
             div#search search 
             div#login 
-                a href="/register" Sign up
-                a href="/login" Log in 
+                - if logged_in_user == nil
+                    a href="/register" Sign up
+                    a href="/login" Log in
+                - else
+                    h2 = logged_in_user
         div.grid_wrapper
             div.grid_child
                 ==yield 
