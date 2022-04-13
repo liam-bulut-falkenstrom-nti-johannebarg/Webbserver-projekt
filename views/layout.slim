@@ -16,6 +16,7 @@ html lang="en"
                     a href="/login" Log in
                 - else
                     h2 = logged_in_user
+                    a href="/destroy" Log out
         div.grid_wrapper
             div.grid_child
                 ==yield 

@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+p {
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+}
+
 * {
     margin: 0px;
     padding: 0px;
@@ -38,6 +45,9 @@ header {
     background-color: lightgray;
     height: 100px;
     border-style:outset;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 article:hover {

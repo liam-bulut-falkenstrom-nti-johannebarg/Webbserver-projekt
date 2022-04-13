@@ -6,7 +6,10 @@ require 'bcrypt'
 enable :sessions
 
 get('/')  do
-    slim(:pokemons, locals:{logged_in_user: session[:id]}) #Kanske låta session innehålla username också?
+    db = SQLite3::Database.new('db/database.db')
+    db.results_as_hash = true
+    pokemon_array_hash = db.execute("SELECT * FROM pokemon")
+    slim(:pokemons, locals:{logged_in_user: session[:id], pokemon_array_hash: pokemon_array_hash}) #Kanske låta session innehålla username också?
 end 
 
 post('/users/new') do
@@ -52,3 +55,8 @@ end
 get('/login')  do
     slim(:login, locals:{logged_in_user: session[:id]}) #Måste man ha locals på alla??
 end 
+
+get('/destroy') do
+    session.destroy
+    redirect('/')
+end
