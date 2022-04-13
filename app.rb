@@ -60,3 +60,18 @@ get('/destroy') do
     session.destroy
     redirect('/')
 end
+
+get('/pokemon/:id') do
+    db = SQLite3::Database.new('db/database.db')
+    db.results_as_hash = true
+    type_id_hash_array = db.execute("SELECT type_id FROM pkmn_type_relation WHERE pkmn_id = ?", params[:id])
+    type_hash_array = []
+    type_id_hash_array.each do |type_id_hash|
+        type_hash_array << db.execute("SELECT type_name FROM type WHERE id = ?", type_id_hash["type_id"]).first
+    end
+    p type_hash_array
+
+    
+    pokemon_hash = db.execute("SELECT * FROM pokemon WHERE id = ?", params[:id]).first # Finns det bättre sätt att göra detta på?
+    slim(:show, locals:{logged_in_user: session[:id], pokemon_hash: pokemon_hash, type_hash_array: type_hash_array})
+end

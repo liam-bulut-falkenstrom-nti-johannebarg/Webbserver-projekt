@@ -5,6 +5,10 @@ p {
     color: white;
 }
 
+a {
+    text-decoration: none;
+}
+
 * {
     margin: 0px;
     padding: 0px;
@@ -21,7 +25,7 @@ header {
 }
 
 .grid_wrapper {
-    background: url(layout_background.png) fixed;
+    background: url(/views/l) fixed;
     display: grid;
     background-color: blue;
     grid-template-columns:1fr 800px 1fr;
@@ -43,6 +47,7 @@ header {
 
 .article_pokemon {
     background-color: lightgray;
+    color: white;
     height: 100px;
     border-style:outset;
     display: flex;
@@ -50,7 +55,7 @@ header {
     align-items: center;
 }
 
-article:hover {
+.article_pokemon:hover {
     background-color: rgb(192, 192, 192);
     border-style:none;
 }
@@ -84,23 +89,45 @@ article:hover {
     align-items: center;
 }
 
-.picture {
-    grid-area: a1;
+#main_show {
     background-color: aqua;
+    height: 477px;
+    display:grid;
+    grid-template-columns:1fr 2fr;
+    grid-template-areas: 
+    "pi st"
+    "ty st"
+    "gr gr"
+
+}
+
+.picture {
+    grid-area: pi;
+    height: 200px;
+    display: flex;
+    justify-self: center;
+    align-self: center;
 }
 
 .type {
-    grid-area: a2;
-    background-color: lightcoral;
+    grid-area: ty;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.type img {
+    height: 50px;
+    width: auto;
 }
 
 .stats {
-    grid-area: a3;
+    grid-area: st;
     background-color: blue;
 }
 
 .moves_grid_wrapper {
-    grid-area: a4;
+    grid-area: gr;
     background-color: lightgreen;
     display: grid;
     grid-template-columns:1fr 1fr;

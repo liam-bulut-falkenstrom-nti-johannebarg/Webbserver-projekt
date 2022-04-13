@@ -1,8 +1,11 @@
-article.picture hej1
-article.stats hej2
-article.type hej3
-div.moves_grid_wrapper 
-    article hej1
-    article hej2
-    article hej3
-    article hej4
+main#main_show
+    img.picture src="/img/#{pokemon_hash["name"].downcase}_big.png" alt="#{pokemon_hash["name"]}"/
+    article.stats
+    article.type
+        - type_hash_array.each do |type_hash|
+            img src="/img/#{type_hash["type_name"]}.png" alt="#{type_hash["type_name"].upcase}"/
+    div.moves_grid_wrapper 
+        article hej1
+        article hej2
+        article hej3
+        article hej4
