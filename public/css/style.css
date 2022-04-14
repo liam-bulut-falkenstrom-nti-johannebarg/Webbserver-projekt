@@ -24,10 +24,13 @@ header {
     "myt src log";
 }
 
+body {
+    background: url(/img/layout_background.png) no-repeat fixed;
+}
+
+
 .grid_wrapper {
-    background: url(/views/l) fixed;
     display: grid;
-    background-color: blue;
     grid-template-columns:1fr 800px 1fr;
     grid-template-areas: 
     "area1 area2 area3";
@@ -69,6 +72,19 @@ header {
     align-items: center;
 }
 
+#search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#myteams {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 85px;
+}
+
 #login {
     display: flex;
     justify-content: flex-end;
@@ -94,6 +110,7 @@ header {
     height: 477px;
     display:grid;
     grid-template-columns:1fr 2fr;
+    grid-template-rows:227px 100px 150px;
     grid-template-areas: 
     "pi st"
     "ty st"
@@ -111,6 +128,7 @@ header {
 
 .type {
     grid-area: ty;
+    height: 50px;
     display: flex;
     justify-content: space-evenly;
     align-items: center;

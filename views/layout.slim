@@ -7,7 +7,32 @@ head
 body 
     header 
         div#myteams my teams 
-        div#search search 
+            a href="/teams" 
+        div#search
+            form action="/" method="get"
+                select name="filter" type="text"
+                    option value="all" All
+                    option value="bug" Bug
+                    option value="dark" Dark
+                    option value="dragon" Dragon
+                    option value="electric" Electric
+                    option value="fairy" Fairy
+                    option value="fighting" Fighting
+                    option value="fire" Fire
+                    option value="flying" Flying
+                    option value="ghost" Ghost
+                    option value="grass" Grass
+                    option value="ground" Ground
+                    option value="ice" Ice
+                    option value="normal" Normal
+                    option value="poison" Poison
+                    option value="psychic" Psychic
+                    option value="rock" Rock
+                    option value="steel" Steel
+                    option value="water" Water
+                input type="submit" value="Filter" 
+                / Får jag använda get här med tanke på att det inte är viktig information??
+                / Använd typ array.select för detta sen
         div#login 
             - if logged_in_user == nil
                 a href="/register" Sign up
