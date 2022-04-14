@@ -1,11 +1,16 @@
 main#main_show
-    img.picture src="/img/#{pokemon_hash["name"].downcase}_big.png" alt="#{pokemon_hash["name"]}"/
+    article.profile 
+        p = "##{pokemon_hash["id"]} #{pokemon_hash["name"]}"
+        img.picture src="/img/#{pokemon_hash["name"].downcase}_big.png" alt="#{pokemon_hash["name"]}"/
+        article.type
+            - type_hash_array.each do |type_hash|
+                img src="/img/#{type_hash["type_name"]}.png" alt="#{type_hash["type_name"].upcase}"/
     article.stats
-    article.type
-        - type_hash_array.each do |type_hash|
-            img src="/img/#{type_hash["type_name"]}.png" alt="#{type_hash["type_name"].upcase}"/
+        a href="/" < Back
+        a href="/add/#{pokemon_hash["id"]}" 
+            article.add Add Pokémon  
     div.moves_grid_wrapper 
-        article hej1
-        article hej2
-        article hej3
-        article hej4
+        article move1
+        article move2
+        article move3
+        article move4

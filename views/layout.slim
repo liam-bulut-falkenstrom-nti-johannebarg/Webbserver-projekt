@@ -6,8 +6,13 @@ head
     title Pokémon site
 body 
     header 
-        div#myteams my teams 
-            a href="/teams" 
+        div#myteams
+            - if added_pokemon_id_array == nil
+                a href="/teams" My teams
+            - elsif added_pokemon_id_array.length <= 6
+                a href="/cancel" Cancel
+                a href="/pokemons/new" Create team 
+                p = "#{added_pokemon_id_array.length}/6" 
         div#search
             form action="/" method="get"
                 select name="filter" type="text"

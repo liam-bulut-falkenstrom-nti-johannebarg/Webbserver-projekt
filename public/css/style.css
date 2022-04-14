@@ -72,6 +72,15 @@ body {
     align-items: center;
 }
 
+#main_create {
+    background-color: aqua;
+    height: 477px;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
 #search {
     display: flex;
     justify-content: center;
@@ -110,47 +119,57 @@ body {
     height: 477px;
     display:grid;
     grid-template-columns:1fr 2fr;
-    grid-template-rows:227px 100px 150px;
+    grid-template-rows: 327px 150px;
     grid-template-areas: 
-    "pi st"
-    "ty st"
+    "pr st"
     "gr gr"
 
 }
 
-.picture {
-    grid-area: pi;
-    height: 200px;
+.profile {
+    grid-area: pr;
     display: flex;
-    justify-self: center;
-    align-self: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: lightgray;
+    color: white;
+    border-style:outset;
+}
+
+.profile img {
+    height: 200px;
 }
 
 .type {
-    grid-area: ty;
-    height: 50px;
+    width: 100%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
 }
 
 .type img {
-    height: 50px;
+    height: 45px;
     width: auto;
 }
 
 .stats {
     grid-area: st;
-    background-color: blue;
+    background-color: lightgray;
+    color: white;
+    border-style:outset;
 }
 
 .moves_grid_wrapper {
     grid-area: gr;
-    background-color: lightgreen;
     display: grid;
     grid-template-columns:1fr 1fr;
-    grid-template-areas: 
-    "d3 d4"
+}
+
+.moves_grid_wrapper article {
+    background-color: lightgray;
+    color: white;
+    border-style:outset;
 }
 
 .grid_wrapper_teams {
