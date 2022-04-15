@@ -7,8 +7,8 @@ main#main_show
                 img src="/img/#{type_hash["type_name"]}.png" alt="#{type_hash["type_name"].upcase}"/
     article.stats
         a href="/" < Back
-        a href="/add/#{pokemon_hash["id"]}" 
-            article.add Add Pokémon  
+        article.add  
+            a href="/add/#{pokemon_hash["id"]}" Add Pokémon 
     div.moves_grid_wrapper 
         article move1
         article move2
