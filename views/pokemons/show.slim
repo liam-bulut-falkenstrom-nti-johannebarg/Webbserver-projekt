@@ -1,0 +1,28 @@
+main#main_show
+    article.profile 
+        p = "##{pokemon_hash["id"]} #{pokemon_hash["name"]}"
+        img.picture src="/img/#{pokemon_hash["name"].downcase}_big.png" alt="#{pokemon_hash["name"]}"/
+        article.type
+            - type_hash_array.each do |type_hash|
+                img src="/img/#{type_hash["type_name"]}.png" alt="#{type_hash["type_name"].upcase}"/
+    article.stats
+        a href="/" < Back
+        - if logged_in_user == nil
+            article.full 
+                p Log in to add Pokémon
+        - else
+            - if added_pokemon_id_array != nil
+                - if added_pokemon_id_array.length >= 6
+                    article.full 
+                        p Can't add more Pokémon
+                - else
+                    article.add  
+                        a href="/add/#{pokemon_hash["id"]}" Add Pokémon
+            - else 
+                article.add  
+                        a href="/add/#{pokemon_hash["id"]}" Add Pokémon
+    div.moves_grid_wrapper 
+        article move1
+        article move2
+        article move3
+        article move4

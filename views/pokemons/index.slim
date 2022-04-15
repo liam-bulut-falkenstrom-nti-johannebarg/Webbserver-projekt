@@ -1,6 +1,6 @@
 main#main_start
     - pokemon_array_hash.each do |pokemon_hash|
-        a.article_pokemon href="/pokemon/#{pokemon_hash["id"]}" 
+        a.article_pokemon href="/pokemons/#{pokemon_hash["id"]}" 
             p = "##{pokemon_hash["id"]}"
             p = "#{pokemon_hash["name"]}"
             img src="/img/#{pokemon_hash["name"].downcase}_small.png" alt="#{pokemon_hash["name"]}"

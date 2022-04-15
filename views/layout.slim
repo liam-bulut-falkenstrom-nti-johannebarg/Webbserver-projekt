@@ -8,13 +8,13 @@ body
     header 
         div#myteams
             - if added_pokemon_id_array == nil
-                a href="/teams" My teams
+                a href="/teams/" My teams
             - elsif added_pokemon_id_array.length <= 6
                 a href="/cancel" Cancel
                 a href="/teams/new" Create team 
                 p = "#{added_pokemon_id_array.length}/6" 
         div#search
-            form action="/" method="get"
+            form action="/pokemons/" method="get"
                 select name="filter" type="text"
                     option value="all" All
                     option value="bug" Bug
@@ -40,8 +40,8 @@ body
                 / Använd typ array.select för detta sen
         div#login 
             - if logged_in_user == nil
-                a href="/register" Sign up
-                a href="/login" Log in
+                a href="/users/new" Sign up
+                a href="/users/login" Log in
             - else
                 p = logged_in_user
                 a href="/destroy" Log out

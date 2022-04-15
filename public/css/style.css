@@ -193,6 +193,35 @@ body {
     align-items: center;
 }
 
+#main_show .stats .full {
+    height: 150px;
+    width: 300px;
+    margin-top: 60px;
+    margin-left: 110px;
+    border-style:outset;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#main_show .stats .full p {
+    color: black;
+    font-size: 10px;
+}
+
+#main_show .stats .full {
+    height: 150px;
+    width: 300px;
+    margin-top: 60px;
+    margin-left: 110px;
+    background-color: lightgray;
+    color: white;
+    border-style:outset;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .profile {
     grid-area: pr;
     display: flex;
