@@ -180,6 +180,48 @@ body {
     "d3 d4"
 }
 
-.grid_wrapper_teams article {
+#main_teams {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+#main_teams .team_wrapper {
+    display: grid;
+    grid-template-columns:1fr 1fr;
+    grid-gap: 30px;
+}
+
+#main_teams .team_wrapper .team {
     height: 400px;
+    width: 300px;
+    margin-top: 30px;
+    padding-top: 10px;
+    padding-left: 10px;
+    background-color: lightgray;
+    color: white;
+    border-style:outset;
+}
+
+#main_teams .team_wrapper .team .name_and_picture {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#main_teams .team_wrapper .team .team_name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#main_teams .team_wrapper .team .team_name p {
+    color: darkblue;
+}
+
+
+#main_teams .team_wrapper .team .name_and_picture img {
+    height: 60px;
 }

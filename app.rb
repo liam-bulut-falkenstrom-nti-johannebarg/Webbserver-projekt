@@ -39,11 +39,11 @@ post('/users/new') do
     end
 end
 
-get('/pokemons/new') do
-    slim(:"pokemons/new", locals:{logged_in_user: session[:id], added_pokemon_id_array: session[:added_pkmns]})
+get('/teams/new') do
+    slim(:"teams/new", locals:{logged_in_user: session[:id], added_pokemon_id_array: session[:added_pkmns]})
 end
 
-post('/pokemons') do
+post('/teams') do
     team_name = params[:team_name]
     added_pokemon_id_array = session[:added_pkmns]
     db = SQLite3::Database.new('db/database.db')
@@ -58,6 +58,15 @@ post('/pokemons') do
     end
     session[:added_pkmns] = nil
     redirect('/')
+end
+
+post('/teams/:id/delete') do
+    team_id = params[:id].to_i
+    p team_id
+    db = SQLite3::Database.new('db/database.db')
+    db.execute("DELETE FROM team_pkmn_relation WHERE team_id = ?", team_id)
+    db.execute("DELETE FROM team WHERE id = ?", team_id)
+    redirect('/teams')
 end
 
 get('/teams') do
