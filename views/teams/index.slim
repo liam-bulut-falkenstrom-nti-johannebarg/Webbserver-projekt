@@ -2,21 +2,24 @@ main#main_teams
     a.back_link href="/" < Back
     - if logged_in_user == nil 
         p = "log in to see your teams!"
-    - else 
-        p = "#{logged_in_user}'s teams:"
-        - if team_hash_array.length == 0
-            p = "no teams yet"
-        - else
-            article.team_wrapper
-                - i = 0
-                - while i < team_hash_array.length 
-                    article.team
-                        div.team_name
-                            p = "#{team_hash_array[i]["team_name"]}"
-                        - array_with_all_team_pokemon_hashes[i].each do |pokemon_hash|
-                            div.name_and_picture
-                                img src="/img/#{pokemon_hash["name"].downcase}_small.png"/
-                                p = "#{pokemon_hash["name"]}" 
-                        form action="/teams/#{team_hash_array[i]["id"]}/delete" method="post"
-                            input type="submit" value="Delete team"  
-                    - i += 1
+    - else
+        - i = 0
+        - while i < user_hash_array.length
+            p = "#{user_hash_array[i]["username"]}'s teams:"
+            - if team_pokemon_name_hash_nested_array[i].length == 0
+                p = "no teams yet"
+            - else
+                article.team_wrapper
+                    - j = 0
+                    - while j < team_pokemon_name_hash_nested_array[i].length # går igenom alla teams 
+                        article.team
+                            div.team_name
+                                p = "#{team_hash_nested_array[i][j]["team_name"]}"
+                            - team_pokemon_name_hash_nested_array[i][j].each do |pokemon_hash|
+                                div.name_and_picture
+                                    img src="/img/#{pokemon_hash["name"].downcase}_small.png"/
+                                    p = "#{pokemon_hash["name"]}" 
+                            form action="/teams/#{team_hash_nested_array[i][j]["id"]}/delete" method="post"
+                                input type="submit" value="Delete team"  
+                        - j += 1
+            - i += 1

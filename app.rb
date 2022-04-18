@@ -23,10 +23,15 @@ get('/pokemons/')  do
             pokemon_array_hash << db.execute("SELECT * FROM pokemon WHERE id = ?", pkmn_id_hash["pkmn_id"]).first
         end
     end
-    slim(:"/pokemons/index", locals:{logged_in_user: session[:id], added_pokemon_id_array: session[:added_pkmns], pokemon_array_hash: pokemon_array_hash}) #Kanske låta session innehålla username också?
+    if session[:id] != nil   
+        username = db.execute("SELECT username FROM users WHERE id = ?", session[:id]).first[0]
+    else
+        username = nil
+    end
+    slim(:"/pokemons/index", locals:{logged_in_user: username, added_pokemon_id_array: session[:added_pkmns], pokemon_array_hash: pokemon_array_hash}) #Kanske låta session innehålla username också?
 end 
 
-post('/users') do
+post('/users/new') do
     username = params[:username]
     password = params[:password]
     confirmed_password = params[:confirmed_password]
@@ -51,12 +56,8 @@ post('/teams') do
     team_name = params[:team_name]
     added_pokemon_id_array = session[:added_pkmns]
     db = SQLite3::Database.new('db/database.db')
-    p session[:id]
-    p team_name
-    p added_pokemon_id_array
     db.execute("INSERT INTO team (team_name, user_id) VALUES (?,?)", team_name, session[:id])
     team_id = db.execute("SELECT id FROM team WHERE team_name = ?", team_name).first[0]
-    p team_id
     added_pokemon_id_array.each do |added_pokemon_id|
         db.execute("INSERT INTO team_pkmn_relation (team_id, pkmn_id) VALUES (?,?)", team_id, added_pokemon_id)
     end
@@ -66,7 +67,6 @@ end
 
 post('/teams/:id/delete') do
     team_id = params[:id].to_i
-    p team_id
     db = SQLite3::Database.new('db/database.db')
     db.execute("DELETE FROM team_pkmn_relation WHERE team_id = ?", team_id)
     db.execute("DELETE FROM team WHERE id = ?", team_id)
@@ -74,36 +74,43 @@ post('/teams/:id/delete') do
 end
 
 get('/teams/') do
-
     user_id = session[:id]
-    p user_id
     if user_id == nil 
-        slim(:"/teams/index", locals:{logged_in_user: user_id, added_pokemon_id_array: nil, team_hash_array: nil, array_with_all_team_pokemon_hashes: nil})
+        slim(:"/teams/index", locals:{logged_in_user: user_id, added_pokemon_id_array: nil, team_hash_array: nil, team_pokemon_name_hash_nested_array: nil})
     else
         db = SQLite3::Database.new('db/database.db')
         db.results_as_hash = true
         username = db.execute("SELECT username FROM users WHERE id = ?", user_id).first["username"]
-        p username
-        team_hash_array = db.execute("SELECT id, team_name FROM team WHERE user_id = ?", user_id)
-        p team_hash_array
-           
-        team_pokemon_id_hash_array = []
-        team_hash_array.each do |team_hash|
-            team_pokemon_id_hash_array << db.execute("SELECT pkmn_id FROM team_pkmn_relation WHERE team_id = ?", team_hash["id"])
-        end        
-
-        array_with_all_team_pokemon_hashes = []
-        team_pokemon_id_hash_array.each do |array_with_team_pokemon_ids|
-            temp_array = []
-            array_with_team_pokemon_ids.each do |pokemon_hash|
-                temp_array << db.execute("SELECT * FROM pokemon WHERE id = ?", pokemon_hash["pkmn_id"]).first
-            end
-            array_with_all_team_pokemon_hashes << temp_array
+        if username == "Admin"
+            user_hash_array = db.execute("SELECT id, username FROM users WHERE username != ?", username) 
+        else
+            user_hash_array = db.execute("SELECT id, username FROM users WHERE username = ?", username)
+        end          
+        team_hash_nested_array = []
+        user_hash_array.each do |user_hash|
+            team_hash_nested_array << db.execute("SELECT id, team_name FROM team WHERE user_id = ?", user_hash["id"])
         end
-
-        p array_with_all_team_pokemon_hashes
-        slim(:"/teams/index", locals:{logged_in_user: username, added_pokemon_id_array: session[:added_pkmns], team_hash_array: team_hash_array, array_with_all_team_pokemon_hashes: array_with_all_team_pokemon_hashes})
-        
+        team_pokemon_id_hash_nested_array = []
+        team_hash_nested_array.each do |team_hash_array|
+            temp_array = []
+            team_hash_array.each do |team_hash|
+                temp_array << db.execute("SELECT pkmn_id FROM team_pkmn_relation WHERE team_id = ?", team_hash["id"])
+            end
+            team_pokemon_id_hash_nested_array << temp_array
+        end
+        team_pokemon_name_hash_nested_array = []
+        team_pokemon_id_hash_nested_array.each do |team_pokemon_id_hash_array|
+            temp_array_2 = []
+            team_pokemon_id_hash_array.each do |pokemon_id_hash_array|
+                temp_array = []
+                pokemon_id_hash_array.each do |pokemon_id_hash|
+                    temp_array << db.execute("SELECT name FROM pokemon WHERE id = ?", pokemon_id_hash["pkmn_id"]).first
+                end
+                temp_array_2 << temp_array
+            end
+            team_pokemon_name_hash_nested_array << temp_array_2
+        end
+        slim(:"/teams/index", locals:{logged_in_user: username, added_pokemon_id_array: session[:added_pkmns], user_hash_array: user_hash_array, team_hash_nested_array: team_hash_nested_array, team_pokemon_name_hash_nested_array: team_pokemon_name_hash_nested_array})
     end
 end 
 

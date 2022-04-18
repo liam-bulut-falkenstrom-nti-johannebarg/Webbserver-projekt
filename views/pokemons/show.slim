@@ -10,6 +10,9 @@ main#main_show
         - if logged_in_user == nil
             article.full 
                 p Log in to add Pokémon
+        - elsif logged_in_user == "Admin"
+            article.full 
+                p Admin can't add Pokémon
         - else
             - if added_pokemon_id_array != nil
                 - if added_pokemon_id_array.length >= 6
