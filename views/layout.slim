@@ -7,7 +7,7 @@ head
 body 
     header 
         div#myteams
-            - if logged_in_user == "Admin"
+            - if username == "Admin"
                 a href="/teams/" User teams
             - elsif added_pokemon_id_array == nil
                 a href="/teams/" My teams
@@ -41,11 +41,11 @@ body
                 / Får jag använda get här med tanke på att det inte är viktig information??
                 / Använd typ array.select för detta sen
         div#login 
-            - if logged_in_user == nil
+            - if username == nil
                 a href="/users/new" Sign up
                 a href="/users/login" Log in
             - else
-                p = logged_in_user
+                p = username
                 a href="/destroy" Log out
     div.grid_wrapper
         div.grid_child

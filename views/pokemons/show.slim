@@ -7,10 +7,10 @@ main#main_show
                 img src="/img/#{type_hash["type_name"]}.png" alt="#{type_hash["type_name"].upcase}"/
     article.stats
         a href="/" < Back
-        - if logged_in_user == nil
+        - if username == nil
             article.full 
                 p Log in to add Pokémon
-        - elsif logged_in_user == "Admin"
+        - elsif username == "Admin"
             article.full 
                 p Admin can't add Pokémon
         - else
