@@ -5,7 +5,7 @@ main#main_teams
     - else
         - i = 0
         - while i < user_hash_array.length
-            p = "#{user_hash_array[i]["username"]}'s teams:"
+            p = "#{user_hash_array[i]["username"]}'s teams:" 
             - if team_pokemon_name_hash_nested_array[i].length == 0
                 p = "no teams yet"
             - else
@@ -13,6 +13,7 @@ main#main_teams
                     - j = 0
                     - while j < team_pokemon_name_hash_nested_array[i].length # går igenom alla teams 
                         article.team
+                            a href="/teams/#{team_hash_nested_array[i][j]["id"]}/edit" Change team name
                             div.team_name
                                 p = "#{team_hash_nested_array[i][j]["team_name"]}"
                             - team_pokemon_name_hash_nested_array[i][j].each do |pokemon_hash|

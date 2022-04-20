@@ -1,0 +1,6 @@
+main#main_edit
+    a.back_link href="/" < Back
+    h1 Choose new name for #{team_hash["team_name"]}
+    form action="/photos/#{team_hash["id"]}/update" method="post"
+        input name="new_team_name" placeholder="Enter new name for team" type="text"
+        input type="submit" value="Change" 

@@ -8,28 +8,34 @@ enable :sessions
 
 include Model
 
-# Ska jag ha med update???
+# Ska jag ha med update??? jaaaaaaa
 
-helpers do
-    def username
-        db = connect_to_db('db/database.db')
-        if session[:id] != nil
-            username = db.execute("SELECT username FROM users WHERE id = ?", session[:id]).first["username"]
-        else
-            username = nil
-        end
-        return username
-    end
-end
-   
 before('/teams/') do
-    if username == nil 
-        slim(:"/teams/index", locals:{user_id: session[:id], added_pokemon_id_array: nil, team_hash_array: nil, team_pokemon_name_hash_nested_array: nil})
+    if session[:logged_in_user] == nil 
+        slim(:"/teams/index", locals:{username: session[:logged_in_user], added_pokemon_id_array: nil, team_hash_array: nil, team_pokemon_name_hash_nested_array: nil})
     end
 end
 
-# before added pkmn array?
-# är användaren inloggad? används den för typ
+before('/teams/:id/delete') do
+    user_name = get_user_name(params[:id])
+    if user_name != session[:logged_in_user] && session[:logged_in_user] != "Admin"
+        redirect('/error/User_does_not_have_permission_to_delete_this_team')
+    end
+end
+
+before('/teams') do
+    if session[:logged_in_user] == nil
+        redirect('/error/You_need_to_log_in_to_add_teams')
+    end
+    if session[:added_pkmns] == nil
+        redirect('/error/Please_choose_at_least_one_Pokemon')
+    end
+    if params[:team_name].length == 0
+        redirect('/error/Please_name_your_team')
+    end
+end
+
+#kanske har alla errorchecks som before-block typ som register grejen
 
 get('/')  do
     redirect('/pokemons/')
@@ -42,63 +48,54 @@ get('/pokemons/')  do
 
     pokemon_array_hash = filter_pokemon(filter)
 
-    slim(:"/pokemons/index", locals:{added_pokemon_id_array: session[:added_pkmns], pokemon_array_hash: pokemon_array_hash})
+    slim(:"/pokemons/index", locals:{username: session[:logged_in_user], added_pokemon_id_array: session[:added_pkmns], pokemon_array_hash: pokemon_array_hash})
 end 
 
 
 get('/pokemons/:id') do
-    db = connect_to_db('db/database.db')
-    
-    type_hash_array = db.execute("SELECT type.id, type.type_name FROM pkmn_type_relation INNER JOIN type ON type.id = pkmn_type_relation.type_id WHERE pkmn_id = ?", params[:id])
 
-    pokemon_hash = db.execute("SELECT * FROM pokemon WHERE id = ?", params[:id]).first # Finns det bättre sätt att göra detta på?
+    output_array = get_pokemons_and_types(params[:id])
 
-    slim(:"/pokemons/show", locals:{pokemon_hash: pokemon_hash, type_hash_array: type_hash_array, added_pokemon_id_array: session[:added_pkmns]})
+    slim(:"/pokemons/show", locals:{username: session[:logged_in_user], pokemon_hash: output_array[0], type_hash_array: output_array[1], added_pokemon_id_array: session[:added_pkmns]})
 end
 
 
 
 get('/teams/') do
-    # db = connect_to_db('db/database.db')
-    
-    # if username == "Admin"
-    #     user_hash_array = db.execute("SELECT id, username FROM users WHERE username != ?", username) 
-    # else
-    #     user_hash_array = db.execute("SELECT id, username FROM users WHERE username = ?", username)
-    # end
+    output_array = get_team(session[:logged_in_user])
 
-    # team_hash_nested_array = []
-    # user_hash_array.each do |user_hash|
-    #     team_hash_nested_array << db.execute("SELECT id, team_name FROM team WHERE user_id = ?", user_hash["id"])
-    # end
-
-    # team_pokemon_name_hash_nested_array = []
-    # team_hash_nested_array.each do |team_hash_array|
-    #     temp_array = []
-    #     team_hash_array.each do |team_hash|
-    #         temp_array << db.execute("SELECT pokemon.name FROM team_pkmn_relation INNER JOIN pokemon ON team_pkmn_relation.pkmn_id = pokemon.id WHERE team_id = ?", team_hash["id"])
-    #     end
-    #     team_pokemon_name_hash_nested_array << temp_array
-    # end
-
-    output_array = get_team(username)
-
-    slim(:"/teams/index", locals:{added_pokemon_id_array: session[:added_pkmns], user_hash_array: output_array[0], team_hash_nested_array: output_array[1], team_pokemon_name_hash_nested_array: output_array[2]})
+    slim(:"/teams/index", locals:{username: session[:logged_in_user], added_pokemon_id_array: session[:added_pkmns], user_hash_array: output_array[0], team_hash_nested_array: output_array[1], team_pokemon_name_hash_nested_array: output_array[2]})
 end 
 
 
 get('/teams/new') do
-    slim(:"/teams/new", locals:{added_pokemon_id_array: session[:added_pkmns]})
+    slim(:"/teams/new", locals:{username: session[:logged_in_user], added_pokemon_id_array: session[:added_pkmns]})
+end
+
+
+get('/teams/:id/edit') do
+    team_id = params[:id]
+    team_hash = get_team_hash(team_id)
+    slim(:"/teams/edit", locals:{username: session[:logged_in_user], added_pokemon_id_array: session[:added_pkmns], team_hash: team_hash})
+end
+
+post('/photos/:id/update') do
+    team_id = params[:id]
+    new_team_name = params[:new_team_name]
+    update_team(team_id, new_team_name)
+
+    redirect('/teams/')
 end
 
 post('/teams') do
     team_name = params[:team_name]
     added_pokemon_id_array = session[:added_pkmns]
 
-    new_team(team_name, added_pokemon_id_array)
+    session[:added_pkmns] = new_team(team_name, added_pokemon_id_array, session[:logged_in_user])
 
     redirect('/teams/')
 end
+
 
 post('/teams/:id/delete') do
     team_id = params[:id].to_i
@@ -111,22 +108,24 @@ end
 
 
 get('/users/login')  do
-    slim(:"/users/login", locals:{added_pokemon_id_array: session[:added_pkmns]}) #Måste man ha locals på alla??
-end 
+    slim(:"/users/login", locals:{username: session[:logged_in_user], added_pokemon_id_array: session[:added_pkmns]}) #Måste man ha locals på alla??
+end
+
 
 post('/users/login') do    
     username = params[:username]
     password = params[:password]
 
-    login_user(username, password)
+    session[:logged_in_user] = login_user(username, password)
 
     redirect('/pokemons/')
 end
 
 
 get('/users/new')  do
-    slim(:"/users/new", locals:{added_pokemon_id_array: session[:added_pkmns]})
+    slim(:"/users/new", locals:{username: session[:logged_in_user], added_pokemon_id_array: session[:added_pkmns]})
 end 
+
 
 post('/users/new') do
     username = params[:username]
@@ -161,9 +160,10 @@ get('/cancel') do
     redirect('/pokemons/')
 end
 
+
 get('/error/:error_message') do
     error_message = params[:error_message].split("_").join(" ")
-    slim(:error, locals:{added_pokemon_id_array: session[:added_pkmns], error_message: error_message})
+    slim(:error, locals:{username: session[:logged_in_user], added_pokemon_id_array: session[:added_pkmns], error_message: error_message})
 end
 
 # TODO: kanske lägga till förmåga för Admin att ta bort registrerade accounts
