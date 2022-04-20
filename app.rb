@@ -8,7 +8,19 @@ enable :sessions
 
 include Model
 
+# Ska jag ha med update???
 
+helpers do
+    def username
+        db = connect_to_db('db/database.db')
+        if session[:id] != nil
+            username = db.execute("SELECT username FROM users WHERE id = ?", session[:id]).first["username"]
+        else
+            username = nil
+        end
+        return username
+    end
+end
    
 before('/teams/') do
     if username == nil 
@@ -47,31 +59,31 @@ end
 
 
 get('/teams/') do
-    db = connect_to_db('db/database.db')
+    # db = connect_to_db('db/database.db')
     
-    if username == "Admin"
-        user_hash_array = db.execute("SELECT id, username FROM users WHERE username != ?", username) 
-    else
-        user_hash_array = db.execute("SELECT id, username FROM users WHERE username = ?", username)
-    end
+    # if username == "Admin"
+    #     user_hash_array = db.execute("SELECT id, username FROM users WHERE username != ?", username) 
+    # else
+    #     user_hash_array = db.execute("SELECT id, username FROM users WHERE username = ?", username)
+    # end
 
-    team_hash_nested_array = []
-    user_hash_array.each do |user_hash|
-        team_hash_nested_array << db.execute("SELECT id, team_name FROM team WHERE user_id = ?", user_hash["id"])
-    end
+    # team_hash_nested_array = []
+    # user_hash_array.each do |user_hash|
+    #     team_hash_nested_array << db.execute("SELECT id, team_name FROM team WHERE user_id = ?", user_hash["id"])
+    # end
 
-    team_pokemon_name_hash_nested_array = []
-    team_hash_nested_array.each do |team_hash_array|
-        temp_array = []
-        team_hash_array.each do |team_hash|
-            temp_array << db.execute("SELECT pokemon.name FROM team_pkmn_relation INNER JOIN pokemon ON team_pkmn_relation.pkmn_id = pokemon.id WHERE team_id = ?", team_hash["id"])
-        end
-        team_pokemon_name_hash_nested_array << temp_array
-    end
+    # team_pokemon_name_hash_nested_array = []
+    # team_hash_nested_array.each do |team_hash_array|
+    #     temp_array = []
+    #     team_hash_array.each do |team_hash|
+    #         temp_array << db.execute("SELECT pokemon.name FROM team_pkmn_relation INNER JOIN pokemon ON team_pkmn_relation.pkmn_id = pokemon.id WHERE team_id = ?", team_hash["id"])
+    #     end
+    #     team_pokemon_name_hash_nested_array << temp_array
+    # end
 
-    # Inte säker hur jag ska göra detta till en hjälpfunktion
+    output_array = get_team(username)
 
-    slim(:"/teams/index", locals:{added_pokemon_id_array: session[:added_pkmns], user_hash_array: user_hash_array, team_hash_nested_array: team_hash_nested_array, team_pokemon_name_hash_nested_array: team_pokemon_name_hash_nested_array})
+    slim(:"/teams/index", locals:{added_pokemon_id_array: session[:added_pkmns], user_hash_array: output_array[0], team_hash_nested_array: output_array[1], team_pokemon_name_hash_nested_array: output_array[2]})
 end 
 
 

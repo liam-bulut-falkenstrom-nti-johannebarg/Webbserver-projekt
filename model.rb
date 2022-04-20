@@ -9,18 +9,6 @@ module Model
         return db
     end
 
-    helpers do
-        def username
-            db = connect_to_db('db/database.db')
-            if session[:id] != nil
-                username = db.execute("SELECT username FROM users WHERE id = ?", session[:id]).first["username"]
-            else
-                username = nil
-            end
-            return username
-        end
-    end
-
     def login_user(username, password)
         db = connect_to_db('db/database.db')
         users_hash = db.execute("SELECT * FROM users WHERE username = ?", username).first
@@ -74,6 +62,27 @@ module Model
         db.execute("DELETE FROM team WHERE id = ?", team_id)
     end
 
-    # def get_pokemon/get_team(params)
-
+    def get_team(username)
+        db = connect_to_db('db/database.db')
+        if username == "Admin"
+            user_hash_array = db.execute("SELECT id, username FROM users WHERE username != ?", username) 
+        else
+            user_hash_array = db.execute("SELECT id, username FROM users WHERE username = ?", username)
+        end
+    
+        team_hash_nested_array = []
+        user_hash_array.each do |user_hash|
+            team_hash_nested_array << db.execute("SELECT id, team_name FROM team WHERE user_id = ?", user_hash["id"])
+        end
+    
+        team_pokemon_name_hash_nested_array = []
+        team_hash_nested_array.each do |team_hash_array|
+            temp_array = []
+            team_hash_array.each do |team_hash|
+                temp_array << db.execute("SELECT pokemon.name FROM team_pkmn_relation INNER JOIN pokemon ON team_pkmn_relation.pkmn_id = pokemon.id WHERE team_id = ?", team_hash["id"])
+            end
+            team_pokemon_name_hash_nested_array << temp_array
+        end
+        return [user_hash_array, team_hash_nested_array, team_pokemon_name_hash_nested_array]
+    end
 end
