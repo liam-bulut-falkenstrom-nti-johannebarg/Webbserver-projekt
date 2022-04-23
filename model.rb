@@ -11,7 +11,10 @@ module Model
         return /(#{strings.join("|")})/
     end
        
-
+    def logging(time, ip_address)
+        db = SQLite3::Database.new('db/database.db')
+        db.execute("INSERT INTO logging (ip, time) VALUES (?,?)", ip_address, time)
+    end
 
     def connect_to_db(path)
         db = SQLite3::Database.new(path)

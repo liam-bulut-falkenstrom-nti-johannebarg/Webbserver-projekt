@@ -37,6 +37,11 @@ end
 
 before('/users/login_user') do
     username = params[:username]
+    if session[:logging] != nil
+        if Time.now - session[:logging] < 10
+            redirect('/error/Logging_in_to_fast._Please_try_again_later')
+        end
+    end
     if username_validation(username) == nil
         redirect('/error/User_does_not_exist')
     end
@@ -62,12 +67,16 @@ before('/teams/:id/update') do
     end
 end
 
-after all_of('/', '/users/login_user', '/destroy', '/cancel') do
+after all_of('/', '/destroy', '/cancel') do
     redirect('/pokemons/')
 end
 
-
-
+after('/users/login_user') do
+    ip_address = @env['REMOTE_ADDR']
+    time = Time.new
+    time_string = "#{time.year}/#{time.month}/#{time.day} #{time.hour}:#{time.min}:#{time.sec}"
+    logging(ip_address, time_string)
+end
 
 get('/pokemons/')  do
     filter = params[:filter]
@@ -133,11 +142,14 @@ end
 post('/users/login_user') do    
     username = params[:username]
     password = params[:password]
-
+    session[:logging] = Time.now
     session[:logged_in_user] = login_user(username, password)
     if session[:logged_in_user] == nil
         redirect('/error/Wrong_password')
+    else
+        redirect('/pokemons/')
     end
+   
 end
 
 
