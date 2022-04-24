@@ -8,16 +8,16 @@ enable :sessions
 
 include Model
 
-# Kan inte ha samma namn på teams?? kanske ändra i databasen
-# sparas routes i before block?
-
-
+# Checks if user is logged in or not
+#
 before('/teams/') do
     if session[:logged_in_user] == nil 
         slim(:"/teams/index", locals:{username: session[:logged_in_user], added_pokemon_id_array: nil, team_hash_array: nil, team_pokemon_name_hash_nested_array: nil})
     end
 end
 
+# Checks if the correct user i sending a request to delete a team
+# 
 before('/teams/:id/delete') do
     user_name = get_user_name(params[:id])
     if user_name != session[:logged_in_user] && session[:logged_in_user] != "Admin"
@@ -39,7 +39,7 @@ before('/users/login_user') do
     username = params[:username]
     if session[:logging] != nil
         if Time.now - session[:logging] < 10
-            redirect('/error/Logging_in_to_fast._Please_try_again_later')
+            redirect('/error/Logging_in_too_fast._Please_try_again_later!')
         end
     end
     if username_validation(username) == nil
@@ -181,6 +181,9 @@ get('/add/:pkmn_id') do
     if session[:added_pkmns] == nil
         session[:added_pkmns] = []
     end
+    if session[:added_pkmns].length == 6
+        redirect('/error/Can_not_add_more_Pokemons_to_this_team')
+    end
     session[:added_pkmns] << params[:pkmn_id].to_i
     redirect('/pokemons/')
 end
@@ -195,5 +198,3 @@ get('/error/:error_message') do
     error_message = params[:error_message].split("_").join(" ")
     slim(:error, locals:{username: session[:logged_in_user], added_pokemon_id_array: session[:added_pkmns], error_message: error_message})
 end
-
-# TODO: kanske lägga till förmåga för Admin att ta bort registrerade accounts
